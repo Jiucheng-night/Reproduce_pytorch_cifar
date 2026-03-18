@@ -2,7 +2,7 @@
 This project is a PyTorch implementation of CIFAR image classification, including  some classic models. The code reproduces training and testing pipelines similar to [kuangliu/pytorch-cifar](https://github.com/kuangliu/pytorch-cifar).
 ## Project Structure
 ```
-cifar/
+Reproduce_pytorch_cifar/
 ├── data/ -> this is data of cifar
 ├── checkpoint/ -> this is ckpt.pth
 ├── models/
@@ -16,7 +16,7 @@ cifar/
 1. Clone the repository:
 ```Bash
 git clone https://github.com/Jiucheng-night/Reproduce_pytorch_cifar.git
-cd cifar
+cd Reproduce_pytorch_cifar
 ```
 2. Create a conda environment (recommended):
 ```Bash

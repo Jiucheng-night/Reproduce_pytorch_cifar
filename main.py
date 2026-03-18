@@ -37,7 +37,7 @@ def main():
     testloader = DataLoader(testset, batch_size=100, shuffle=False,
                             num_workers=2, pin_memory=True, prefetch_factor=2, persistent_workers=True)
     print("==> Building model...")
-    net = get_model('cnn').to(device)
+    net = get_model('resnet18').to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9, weight_decay=5e-4)
@@ -59,7 +59,7 @@ def main():
             }
             if not os.path.isdir('checkpoint'):
                 os.mkdir('checkpoint')
-            torch.save(state, './checkpoint/ckpt.pth')
+            torch.save(state, './checkpoint/resnet18_ckpt.pth')
             best_acc = acc
 def train(epoch, net, loader, criterion, optimizer):
     net.train()

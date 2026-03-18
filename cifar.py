@@ -35,9 +35,9 @@ class CIFAR10Dataset(Dataset):
         return len(self.labels)
     def __getitem__(self, idx):
         img = self.data[idx]
-        label = self.labels[idx]
+        labels = self.labels[idx]
         img = Image.fromarray(img)
 
         if self.transform:
             img = self.transform(img)
-        return img, label
+        return img, labels

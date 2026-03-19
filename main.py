@@ -9,6 +9,8 @@ from models import get_model
 from torchvision import transforms
 import torch.backends.cudnn as cudnn
 from torch.optim.lr_scheduler import StepLR
+import json
+
 
 cudnn.benchmark = True
 
@@ -37,8 +39,10 @@ def main():
     testloader = DataLoader(testset, batch_size=100, shuffle=False,
                             num_workers=2, pin_memory=True, prefetch_factor=2, persistent_workers=True)
     print("==> Building model...")
-    model_name = 'resnet34'
+    model_name = 'vgg11'
     checkpoint_path = f'./checkpoint/{model_name}_ckpt.pth'
+    log_path = f'./checkpoint/{model_name}_log.json'
+
     net = get_model(model_name).to(device)
 
     criterion = nn.CrossEntropyLoss()
@@ -47,11 +51,27 @@ def main():
     best_acc = 0
     epoch_numer = 50
     scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
+
+    history= []
     for epoch in range(epoch_numer):
         print(f'\nEpoch {epoch+1}/{epoch_numer}')
-        train(epoch, net, trainloader, criterion, optimizer)
-        acc = test(epoch, net, testloader, criterion)
+        train_loss = train(epoch, net, trainloader, criterion, optimizer)
+        test_loss, acc = test(epoch, net, testloader, criterion)
         scheduler.step()
+
+        history.append({
+            'epoch': epoch + 1,
+            'train_loss': train_loss,
+            'test_loss': test_loss,
+            'test_acc': acc
+        })
+
+        # 保存 JSON 日志
+        if not os.path.isdir('checkpoint'):
+            os.mkdir('checkpoint')
+        with open(log_path, 'w') as f:
+            json.dump(history, f, indent=4)
+
         if acc > best_acc:
             print("Saving model...")
             state = {
@@ -63,9 +83,11 @@ def main():
                 os.mkdir('checkpoint')
             torch.save(state, checkpoint_path)
             best_acc = acc
+
+
 def train(epoch, net, loader, criterion, optimizer):
     net.train()
-
+    total_loss = 0
     for batch_idx, (inputs, targets) in enumerate(loader):
         inputs = inputs.to(device, non_blocking=True)
         targets = targets.to(device, non_blocking=True)
@@ -75,9 +97,10 @@ def train(epoch, net, loader, criterion, optimizer):
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
-
+        total_loss += loss.item()
         progress_bar(batch_idx, len(loader), f'Train Loss: {loss.item():.4f}')
-
+    avg_loss = total_loss / len(loader)
+    return avg_loss
 
 def test(epoch, net, loader, criterion):
     net.eval()
@@ -96,8 +119,9 @@ def test(epoch, net, loader, criterion):
             correct += predicted.eq(targets).sum().item()
             progress_bar(batch_idx, len(loader),
                          f'Test Loss: {test_loss / (batch_idx + 1):.4f} | Acc: {100 * correct / total:.2f}%')
+    avg_loss = test_loss / len(loader)
     acc = 100 * correct / total
-    return acc
+    return avg_loss, acc
 
 
 

@@ -7,7 +7,7 @@ class Block(nn.Module):
     """Depthwise conv + Pointwise conv"""
     def __init__(self, in_planes, out_planes, stride=1):
         super(Block, self).__init__()
-        # 下面实现了深度分离卷积
+        # 下面实现了深度可分离卷积，降低了计算的复杂度，将空间特征提取和通道混合解耦，大大降低了运算的次数
         # groups=in_planes 每个通道分开卷积，不改变通道数，使用3X3的卷积核
         self.conv1 = nn.Conv2d(
             in_planes, in_planes, kernel_size=3, stride=stride, padding=1, groups=in_planes, bias=False

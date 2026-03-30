@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import os
 from cifar import CIFAR10Dataset
-from utils import  progress_bar
+from utils import progress_bar
 from models import get_model
 from torchvision import transforms
 import torch.backends.cudnn as cudnn
@@ -20,10 +20,10 @@ def main():
     print("==> Preparing data...")
 
     transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+        transforms.RandomCrop(32, padding=4), # 随机裁剪， 增强数据
+        transforms.RandomHorizontalFlip(), # 随机镜像，通常不会影响图像识别任务
+        transforms.ToTensor(), # 转化成张量类型
+        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)) # 提前计算的三通道均值和方差
     ])
 
     transform_test = transforms.Compose([
@@ -32,14 +32,14 @@ def main():
     ])
 
     trainset = CIFAR10Dataset(root='./data/cifar-10-batches-py', train=True, transform=transform_train)
-    trainloader = DataLoader(trainset, batch_size=256, shuffle=True,
+    trainloader = DataLoader(trainset, batch_size=64, shuffle=True,
                              num_workers=2, pin_memory=True, prefetch_factor=2, persistent_workers=True)
 
     testset = CIFAR10Dataset(root='./data/cifar-10-batches-py', train=False, transform=transform_test)
     testloader = DataLoader(testset, batch_size=100, shuffle=False,
                             num_workers=2, pin_memory=True, prefetch_factor=2, persistent_workers=True)
     print("==> Building model...")
-    model_name = 'vgg11'
+    model_name = 'resnet152'
     checkpoint_path = f'./checkpoint/{model_name}_ckpt.pth'
     log_path = f'./checkpoint/{model_name}_log.json'
 

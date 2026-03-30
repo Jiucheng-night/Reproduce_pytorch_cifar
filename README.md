@@ -6,11 +6,17 @@ Reproduce_pytorch_cifar/
 ├── data/ -> this is data of cifar
 ├── checkpoint/ -> this is ckpt.pth
 ├── models/
+│   ├── __init__.py
 │   ├── cnn.py
-│   └── resnet.py
+│   ├── resnet.py
+│   ├── vgg.py
+│   └── mobilenet.py
 ├── main.py
 ├── utils.py
-└── cifar.py
+├── cifar.py
+├── engine.py
+├── optim.py
+└── config.py
 ```
 ## Installation
 1. Clone the repository:
@@ -48,3 +54,5 @@ net.eval()
 ## Data
 Place the CIFAR-10 dataset (cifar-10-batches-py) inside the data/ folder.
 The dataset is loaded using the custom CIFAR10Dataset class in ```cifar.py```
+
+

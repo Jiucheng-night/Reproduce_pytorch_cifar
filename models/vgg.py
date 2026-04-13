@@ -10,10 +10,10 @@ cfg = {
 }
 
 class VGG(nn.Module):
-    def __init__(self, vgg_name):
+    def __init__(self, vgg_name, num_classes: int = 10):
         super(VGG, self).__init__()
         self.features = self._make_layers(cfg[vgg_name])
-        self.classifier = nn.Linear(512, 10) # 最后的通道数全部都是512
+        self.classifier = nn.Linear(512, num_classes)
 
     # 定义前向传播函数
     def forward(self, x):
